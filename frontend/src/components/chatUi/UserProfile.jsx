@@ -25,7 +25,7 @@ const UserProfile = (props) => {
                 <div onClick={(e) => {
                     toggleProfile(e);
                 }} className=' w-full cursor-pointer flex justify-center items-center  backdrop-blur-sm '>
-                    <img src={profileImage} alt="user_profile" className=' rounded-full  w-48 h-48 object-center ' />
+                    <img src={profileImage} alt="user_profile" className=' rounded-full  w-48 h-48 md:w-60 md:h-60 object-center ' />
                 </div>
             </div>}
 
