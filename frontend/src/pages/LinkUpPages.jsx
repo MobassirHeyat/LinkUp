@@ -6,3 +6,4 @@ export { default as SuccessPage } from "./SuccessPage.jsx";
 export { default as WelcomePage } from "./WelcomePage.jsx";
 export { default as ChattingPage } from "./ChattingPage.jsx"
 export { default as Inbox } from "./ChatBox.jsx"
+export {default as MessagesLayout} from "./MessagesLayout.jsx"

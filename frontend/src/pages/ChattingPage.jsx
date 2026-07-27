@@ -1,165 +1,232 @@
-import { ArrowLeft, CloudSnow } from 'lucide-react'
-import React from 'react'
-import Input from '../components/Input'
-import Status from '../components/chatUi/Status'
-import { Link } from 'react-router-dom'
-import Inbox from '../components/chatUi/Inbox'
-import { VscDeviceCameraVideo } from "react-icons/vsc";
-import { PiDotsThreeCircleThin } from "react-icons/pi";
-import { GrAddCircle } from "react-icons/gr";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { FiEdit } from "react-icons/fi";
 import { CiSearch } from "react-icons/ci";
-import { IoIosSearch } from "react-icons/io";
+import { VscDeviceCameraVideo } from "react-icons/vsc";
+import Status from "../components/chatUi/Status";
+import Inbox from "../components/chatUi/Inbox";
 
-const ChattingPage = () => {
 
-  const images = [
-    {
-      name: "Steve",
-      imgUrl: "https://randomuser.me/api/portraits/men/1.jpg"
-    },
-    {
-      name: "Daisy",
-      imgUrl: "https://randomuser.me/api/portraits/women/2.jpg"
-    },
-    {
-      name: "Stan",
-      imgUrl: "https://randomuser.me/api/portraits/men/3.jpg"
-    },
-  ];
 
-  const chatProfiles = [
-    {
-      profileUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600",
-      name: "Daisy",
-      message: "Hey, are we still on for tomorrow?",
-      time: "10:45 AM",
-      unreadCount: 2
-    },
-    {
-      profileUrl: "https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?w=1000",
-      name: "Starc",
-      message: "Finished the project draft, check it out!",
-      time: "Yesterday",
-      unreadCount: 5
-    },
-    {
-      profileUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600",
-      name: "Daisy",
-      message: "Hey, are we still on for tomorrow?",
-      time: "10:45 AM",
-      unreadCount: 2
-    },
-    {
-      profileUrl: "https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?w=1000",
-      name: "Starc",
-      message: "Finished the project draft, check it out!",
-      time: "Yesterday",
-      unreadCount: 5
-    },
-    {
-      profileUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600",
-      name: "Daisy",
-      message: "Hey, are we still on for tomorrow?",
-      time: "10:45 AM",
-      unreadCount: 2
-    },
-    {
-      profileUrl: "https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?w=1000",
-      name: "Starc",
-      message: "Finished the project draft, check it out!",
-      time: "Yesterday",
-      unreadCount: 5
-    },
-    {
-      profileUrl: "https://images.unsplash.com/photo-1596304004522-cb0e975c6039?w=1000",
-      name: "Phoenix",
-      message: "Can we schedule a quick call?",
-      time: "Mon 6:30 PM",
-      unreadCount: 0
-    },
-    {
-      profileUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600",
-      name: "Sophia",
-      message: "Loved your presentation today!",
-      time: "Wed 2:30 PM",
-      unreadCount: 1
-    },
-    {
-      profileUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600",
-      name: "Sophia",
-      message: "Loved your presentation today!",
-      time: "Wed 2:30 PM",
-      unreadCount: 1
-    },
-    {
-      profileUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600",
-      name: "Sophia",
-      message: "Loved your presentation today!",
-      time: "Wed 2:30 PM",
-      unreadCount: 1
-    },
-        {
-      profileUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600",
-      name: "Sophia",
-      message: "Loved your presentation today!",
-      time: "Wed 2:30 PM",
-      unreadCount: 1
-    },
-    {
-      profileUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600",
-      name: "Sophia",
-      message: "Loved your presentation today!",
-      time: "Wed 2:30 PM",
-      unreadCount: 1
-    },
-    
-  ];
+const stories = [
+  { name: "Steve", imgUrl: "https://randomuser.me/api/portraits/men/1.jpg" },
+  { name: "Daisy", imgUrl: "https://randomuser.me/api/portraits/women/2.jpg" },
+  { name: "Stan", imgUrl: "https://randomuser.me/api/portraits/men/3.jpg" },
+  { name: "Mia", imgUrl: "https://randomuser.me/api/portraits/women/4.jpg" },
+];
+
+const chatProfiles = [
+  {
+    id: 1,
+    profileUrl: "https://randomuser.me/api/portraits/women/2.jpg",
+    name: "Daisy",
+    message: "Hey, are we still on for tomorrow?",
+    time: "10:45 AM",
+    unreadCount: 2,
+    isOnline: true,
+  },
+  {
+    id: 2,
+    profileUrl: "https://randomuser.me/api/portraits/men/5.jpg",
+    name: "Starc",
+    message: "Finished the project draft, check it out!",
+    time: "Yesterday",
+    unreadCount: 5,
+    isOnline: true,
+  },
+  {
+    id: 3,
+    profileUrl: "https://randomuser.me/api/portraits/men/6.jpg",
+    name: "Phoenix",
+    message: "Can we schedule a quick call?",
+    time: "Mon",
+    unreadCount: 0,
+    isOnline: false,
+  },
+  {
+    id: 4,
+    profileUrl: "https://randomuser.me/api/portraits/women/7.jpg",
+    name: "Sophia",
+    message: "Loved your presentation today! 🔥",
+    time: "Wed",
+    unreadCount: 1,
+    isOnline: true,
+  },
+  {
+    id: 5,
+    profileUrl: "https://randomuser.me/api/portraits/men/8.jpg",
+    name: "Marcus",
+    message: "Are you free this weekend?",
+    time: "Tue",
+    unreadCount: 0,
+    isOnline: false,
+  },
+  {
+    id: 6,
+    profileUrl: "https://randomuser.me/api/portraits/women/9.jpg",
+    name: "Aria",
+    message: "Just sent you the files 📎",
+    time: "Mon",
+    unreadCount: 3,
+    isOnline: true,
+  },
+  {
+    id: 7,
+    profileUrl: "https://randomuser.me/api/portraits/men/10.jpg",
+    name: "Jordan",
+    message: "Let me know when you are done.",
+    time: "Sun",
+    unreadCount: 0,
+    isOnline: false,
+  },
+  {
+    id: 8,
+    profileUrl: "https://randomuser.me/api/portraits/women/11.jpg",
+    name: "Alice",
+    message: "Looking forward to seeing the final version! 🚀",
+    time: "Sun",
+    unreadCount: 0,
+    isOnline: true,
+  },
+];
+
+const TABS = ["Chats", "Status", "Group"];
+
+/* ── Component ───────────────────────────────────────────── */
+
+const ChattingPage = ({ onSelectChat, selectedChatId }) => {
+  const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("Primary");
+
+  const filtered = chatProfiles.filter(
+    (c) =>
+      c.name.toLowerCase().includes(search.toLowerCase()) ||
+      c.message.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
-    <div className=' min-w-sm h-auto min-h-auto bg-white p-6 md:p-8 flex justify-center items-center'>
-      <div className=' flex flex-col gap-4 md:gap-8 lg:gap-8'>
-        {/* navigation  */}
-        <nav className='flex justify-between text-2xl '>
-          <ArrowLeft  />
-          <div className='flex gap-4'>
-            <GrAddCircle className=' text-xl md:text-2xl ' />
-            <VscDeviceCameraVideo className=' text-xl md:text-2xl ' />
-            <PiDotsThreeCircleThin className=' text-xl md:text-2xl ' />
+    <div className="flex flex-col h-full bg-white">
+      {/* ── Header ───────────────────────────── */}
+      <div className="px-5 pt-6 shrink-0">
+        {/* top row */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            {/* avatar placeholder — real app me logged-in user ka avatar */}
+            <img
+              src="https://randomuser.me/api/portraits/men/32.jpg"
+              alt="me"
+              className="w-8 h-8 rounded-full object-cover"
+            />
+            <p className="font-bold text-[15px] text-[#1B1B29]">mr_saifu_a8</p>
           </div>
-        </nav>
-        {/* search-bar  */}
-        <div className='p-2 rounded-lg bg-gray-100 flex gap-2  '>
-          <CiSearch  className=' text-xl md:text-2xl self-center stroke-[1] text-ink-muted ' />
-          <input type="text" placeholder='Search' className='text-ink-light outline-none bg-gray-100 placeholder:text-xs md:placeholder:text-sm ' />
-        </div>
-        {/* stories of friends */}
-        <div className='flex flex-col gap-4' >
-          <h2 className=' md:text-lg lg:text-xl '>Recently</h2>
-          <div className='flex gap-4'>
-            {images.map((imgUrl, index) => {
-              return <Status {...{ imgUrl}} key={index} />
-            })}
+          <div className="flex items-center gap-1">
+            <NavBtn icon={<VscDeviceCameraVideo size={20} />} label="Camera" />
+            <NavBtn icon={<FiEdit size={18} />} label="New Chat" />
           </div>
-
-        </div>
-        {/* messages, requests and inbox */}
-        <div className='flex flex-col gap-4 '>
-          <div className='flex justify-between'>
-            <h3 className=' font-medium text-sm lg:text-lg' >Messages</h3>
-            <Link to="/login" className=' text-blue-700 font-medium text-sm lg:text-lg' > Requests </Link>
-          </div>
-          <div className='max-h-[550px] md:max-h-[768px] lg:max-h-[600px]  no-scrollbar overflow-y-auto scroll-smooth min-w-0 flex-1 flex flex-col gap-4' >
-
-          {chatProfiles.map((item, index) => {
-            return <Inbox {...{ item: item }} key={index} />
-          })}
-          </div>
-
         </div>
 
+        {/* ── Tabs — Primary / General / Requests ── */}
+        <div className="flex border-b border-gray-100 mb-4">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`
+                flex-1 py-2.5 text-sm font-semibold transition-all duration-200
+                ${
+                  activeTab === tab
+                    ? "text-[#1B1B29] border-b-2 border-[#1B1B29]"
+                    : "text-[#A4A4B2] border-b-2 border-transparent hover:text-[#6B6B7B]"
+                }
+              `}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Search bar ───────────────────────── */}
+        <div className="flex items-center gap-2.5 bg-[#f4f4f7] rounded-xl px-4 py-2.5 mb-5">
+          <CiSearch
+            size={19}
+            className="text-[#A4A4B2] shrink-0 stroke-[0.5]"
+          />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search"
+            className="flex-1 bg-transparent outline-none text-sm text-[#1B1B29] placeholder:text-[#A4A4B2]"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="text-[#A4A4B2] hover:text-[#FB4E66] text-xs transition-colors"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* ── Stories ──────────────────────────── */}
+        {!search && activeTab === "Primary" && (
+          <div className="mb-4">
+            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-1">
+              {stories.map((s, i) => (
+                <Status key={i} story={s} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Section label ─────────────────── */}
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs font-semibold text-[#A4A4B2] uppercase tracking-widest">
+            {search
+              ? `${filtered.length} result${filtered.length !== 1 ? "s" : ""}`
+              : "Messages"}
+          </p>
+        </div>
+      </div>
+
+      {/* ── Inbox List ───────────────────────────── */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-3 pb-4">
+        {filtered.length > 0 ? (
+          <div className="flex flex-col gap-0.5">
+            {filtered.map((item) => (
+              <Inbox
+                key={item.id}
+                item={item}
+                isActive={selectedChatId === item.id}
+                onClick={() =>
+                  onSelectChat?.({
+                    id: item.id,
+                    name: item.name,
+                    profileImage: item.profileUrl,
+                    isOnline: item.isOnline,
+                  })
+                }
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-40 gap-2">
+            <p className="text-sm font-semibold text-[#1B1B29]">No results</p>
+            <p className="text-xs text-[#A4A4B2]">Try a different name</p>
+          </div>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChattingPage
+const NavBtn = ({ icon, label }) => (
+  <button
+    aria-label={label}
+    className="w-9 h-9 flex items-center justify-center rounded-full text-[#6B6B7B] hover:bg-gray-100 hover:text-[#FB4E66] transition-all active:scale-90"
+  >
+    {icon}
+  </button>
+);
+
+export default ChattingPage;

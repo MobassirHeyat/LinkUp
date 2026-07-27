@@ -1,25 +1,64 @@
-import React from 'react'
+const Inbox = ({ item, isActive, onClick }) => {
+  const hasUnread = item.unreadCount > 0;
 
-const Inbox = ( item ) => {
-    const { profileUrl, name, message, unreadCount, time } = item.item;
-    return (
-        <div className=' flex gap-4 items-center min-w-0 '>
-            {/* Pfp */}
-            <img src= {profileUrl} alt="ProfileImg" className='rounded-full object-cover w-[72px] h-[60px] ' />
-            <div className=' flex justify-between w-full '>
-                {/* name of contact and Recent messages received */}
-                <div>
-                    <h2 className=' text-md md:text-lg  '> {name} </h2>
-                    <span className='text-gray-500 text-xs md:text-sm' > {message} </span>
-                </div>
-                {/* unread message count and time of the message received  */}
-                <div className=' flex flex-col' >
-                    <div className=' rounded-full self-end bg-red-400 mb-2 w-6 h-6 flex justify-center items-center text-white '> {unreadCount} </div>
-                    <span className=' text-gray-500 text-xs' > {time} </span>
-                </div>
-            </div>
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl
+        transition-all duration-150 text-left group
+        ${
+          isActive
+            ? "bg-[#FFE3E8]" // selected — brand tint
+            : "hover:bg-[#f4f4f7] active:bg-[#FFE3E8]"
+        }
+      `}
+    >
+
+      <div className="relative shrink-0">
+        <img
+          src={item.profileUrl}
+          alt={item.name}
+          className="w-12 h-12 rounded-full object-cover"
+          onError={(e) => {
+            e.target.src = `https://ui-avatars.com/api/?name=${item.name}&background=FB4E66&color=fff`;
+          }}
+        />
+        {item.isOnline && (
+          <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white" />
+        )}
+      </div>
+
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between mb-0.5">
+          <p
+            className={`text-sm truncate ${hasUnread ? "font-bold text-[#1B1B29]" : "font-medium text-[#1B1B29]"}`}
+          >
+            {item.name}
+          </p>
+          <span
+            className={`text-[11px] shrink-0 ml-2 ${hasUnread ? "text-[#FB4E66] font-semibold" : "text-[#A4A4B2]"}`}
+          >
+            {item.time}
+          </span>
         </div>
-    )
-}
 
-export default Inbox
+        <div className="flex items-center justify-between">
+          <p
+            className={`text-xs truncate max-w-[75%] ${hasUnread ? "text-[#1B1B29] font-medium" : "text-[#A4A4B2]"}`}
+          >
+            {item.message}
+          </p>
+          {hasUnread && (
+            <span className="shrink-0 min-w-[20px] h-5 px-1.5 flex items-center justify-center bg-[#FB4E66] text-white text-[10px] font-bold rounded-full ml-2">
+              {item.unreadCount > 9 ? "9+" : item.unreadCount}
+            </span>
+          )}
+        </div>
+      </div>
+    </button>
+  );
+};
+
+export default Inbox;

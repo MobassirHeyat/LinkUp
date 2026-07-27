@@ -1,95 +1,217 @@
-import { ArrowLeft } from 'lucide-react'
-import React, { useState } from 'react'
-import Status from '../components/chatUi/Status'
-import UserProfile from '../components/chatUi/UserProfile';
-import { IoCallOutline } from "react-icons/io5";
-import { IoVideocamOutline } from "react-icons/io5";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { Link } from 'react-router-dom';
-import Messages from '../components/chatUi/Messages';
+import { useState, useRef, useEffect } from "react";
+import { IoCallOutline, IoVideocamOutline, IoSendSharp } from "react-icons/io5";
+import { BsThreeDotsVertical, BsEmojiSmile, BsPaperclip } from "react-icons/bs";
+import { FiArrowLeft } from "react-icons/fi";
+import UserProfile from "../components/chatUi/UserProfile";
+import Messages from "../components/chatUi/Messages";
 
-const ChatBox = () => {
-    const [reply, setreply] = useState("");
+const DEMO_MESSAGES = [
+  { id: 1, sender: "other", text: "Hey! What's up? 👋" },
+  {
+    id: 2,
+    sender: "me",
+    text: "I'm good! Just working on the LinkUp project.",
+  },
+  { id: 3, sender: "other", text: "Nice! How's the chat UI coming along?" },
+  { id: 4, sender: "me", text: "Almost done, adding the finishing touches." },
+  {
+    id: 5,
+    sender: "other",
+    text: "Looking forward to seeing the final version! 🚀",
+  },
+];
 
-    function input(e) {
-        const { value } = e.target;
-        setreply(value)
+const ChatBox = ({ user, onBack }) => {
+  const [messages, setMessages] = useState(DEMO_MESSAGES);
+  const [reply, setReply] = useState("");
+  const [profileViewOpen, setProfileViewOpen] = useState(false);
+
+  const fileInputRef = useRef(null);
+  const bottomRef = useRef(null);
+
+  
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = () => {
+    const text = reply.trim();
+    if (!text) return;
+    setMessages((prev) => [...prev, { id: Date.now(), sender: "me", text }]);
+    setReply("");
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
+  };
 
-    const users = [
-        {
-            id: 1,
-            name: "Alice",
-            profileImage: "https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg"
-        },
-        {
-            id: 2,
-            name: "Bob",
-            profileImage: "images/bob.png"
-        },
-        {
-            id: 3,
-            name: "Charlie",
-            profileImage: "images/charlie.png"
-        }
-    ];
-    const messages = [
-        { id: 1, sender: "me", text: "Hello!" },
-        { id: 2, sender: "me", text: "Hi 👋" },
-        { id: 3, sender: "other", text: "Whats going buddy? I’m making this UI with React for my LinkUp project, it’s not completed yet." },
-        { id: 4, sender: "other", text: "I’m fine, what about you?" },
-        { id: 5, sender: "me", text: "This is not good UI, I have to make it more minimal and attractive..." },
-        { id: 6, sender: "other", text: "Don’t worry, you’ll refine it step by step." },
-        { id: 7, sender: "me", text: "Yeah, I’ll try adding Tailwind for styling." },
-        { id: 8, sender: "other", text: "Good idea, Tailwind makes layouts faster." },
-        { id: 9, sender: "me", text: "I also want to add a profile picture modal when clicked." },
-        { id: 10, sender: "other", text: "That would look neat, like WhatsApp or Instagram." },
-        { id: 11, sender: "me", text: "Exactly, I’ll use useState to toggle it." },
-        { id: 12, sender: "other", text: "Nice, React hooks are powerful." },
-        { id: 13, sender: "me", text: "I’ll also map over an array of users to render chat profiles." },
-        { id: 14, sender: "other", text: "That’s scalable, you won’t need to hardcode." },
-        { id: 15, sender: "me", text: "Do you think I should add animations?" },
-        { id: 16, sender: "other", text: "Yes, transitions will make the UI smoother." },
-        { id: 17, sender: "me", text: "I’ll try fade‑in/out for the modal." },
-        { id: 18, sender: "other", text: "Perfect, Tailwind has transition utilities for that." },
-        { id: 19, sender: "me", text: "Thanks, I’ll keep iterating until it feels polished." },
-        { id: 20, sender: "other", text: "Looking forward to seeing the final version!" }
-    ];
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const imageUrl = URL.createObjectURL(file);
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), sender: "me", text: "", imageUrl },
+    ]);
+    e.target.value = "";
+  };
 
+  return (
+    <div className="flex flex-col h-full bg-[#f4f4f7]">
+   
+      <nav className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 shadow-sm shrink-0">
+       
+        <button
+          onClick={onBack}
+          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 text-[#1B1B29] transition-all active:scale-90 md:hidden"
+        >
+          <FiArrowLeft size={20} />
+        </button>
 
-    return (
-        <div className=' min-w-sm px-6 flex flex-col h-screen bg-neutral-100 '>
-            <nav className='  flex justify-between items-center border-b-2 border-slate-300 py-4 '>
-                <UserProfile user={users} />
-                <div className="flex gap-6 md:gap-8 text-xl">
-                    <Link>
-                        <IoCallOutline />
-                    </Link>
-                    <Link>
-                        <IoVideocamOutline />
-                    </Link>
-                    <Link>
-                        <BsThreeDotsVertical />
-                    </Link>
-                </div>
-            </nav>
-            <div className='flex-1 py-2 rounded mt-3 overflow-y-auto scroll-smooth no-scrollbar'>
-
-                {messages.map((element, index) => {
-                    return <Messages key={index} messages={element} />
-                })}
-
-            </div>
-            <footer className=' flex  justify-between  items-center py-2 mb-3 '>
-                <input placeholder='Type Here...' type="text" value={reply} onChange={
-                    (e) => { input(e) }
-                } className=' rounded-2xl h-7 w-1/2 border-2 border-pink-300 focus:outline-none px-2 text-sm text-slate-900 bg-pink-50 ' />
-
-                <Link className=' px-2 py-1 md:text-lg rounded-lg  bg-pink-500  text-white ' >Send</Link>
-            </footer>
-
+        <div className="flex-1">
+          <UserProfile
+            user={user}
+            onAvatarClick={() => setProfileViewOpen(true)}
+          />
         </div>
-    )
-}
 
-export default ChatBox
+        <div className="flex items-center gap-1">
+          <ActionBtn icon={<IoCallOutline size={20} />} label="Call" />
+          <ActionBtn icon={<IoVideocamOutline size={20} />} label="Video" />
+          <ActionBtn icon={<BsThreeDotsVertical size={18} />} label="More" />
+        </div>
+      </nav>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-4 py-5 no-scrollbar">
+        {messages.map((msg, index) => {
+          const prev = messages[index - 1];
+          const isSameAsPrev = prev && prev.sender === msg.sender;
+          const topMargin = !isSameAsPrev && index !== 0 ? "mt-4" : "mt-1";
+
+          return (
+            <Messages
+              key={msg.id}
+              message={msg}
+              topMargin={topMargin}
+              isSameAsPrev={isSameAsPrev}
+              senderAvatar={user.profileImage}
+            />
+          );
+        })}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* ── input foooter  */}
+      <div className="bg-white border-t border-gray-100 px-4 py-3 shrink-0">
+        <div className="flex items-center gap-3 bg-[#f4f4f7] rounded-2xl px-4 py-2.5">
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="text-[#A4A4B2] hover:text-[#FB4E66] transition-colors shrink-0"
+            aria-label="Send image"
+          >
+            <BsPaperclip size={19} />
+          </button>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+
+          <input
+            type="text"
+            value={reply}
+            onChange={(e) => setReply(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a message..."
+            className="flex-1 bg-transparent outline-none text-sm text-[#1B1B29] placeholder:text-[#A4A4B2]"
+          />
+
+          <button className="text-[#A4A4B2] hover:text-[#FB4E66] transition-colors shrink-0">
+            <BsEmojiSmile size={19} />
+          </button>
+
+          <button
+            onClick={handleSend}
+            disabled={!reply.trim()}
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FB4E66] text-white shrink-0 hover:bg-[#E2364D] active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+          >
+            <IoSendSharp size={15} />
+          </button>
+        </div>
+      </div>
+
+
+      {profileViewOpen && (
+        <ProfileImageViewer
+          user={user}
+          onClose={() => setProfileViewOpen(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+const ActionBtn = ({ icon, label }) => (
+  <button
+    aria-label={label}
+    className="w-9 h-9 flex items-center justify-center rounded-full text-[#6B6B7B] hover:bg-gray-100 hover:text-[#FB4E66] transition-all active:scale-90"
+  >
+    {icon}
+  </button>
+);
+
+const ProfileImageViewer = ({ user, onClose }) => (
+  <div
+    className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur-sm"
+    onClick={onClose}
+  >
+    <div
+      className="flex items-center gap-4 px-4 py-4 shrink-0"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={onClose}
+        className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all"
+      >
+        <FiArrowLeft size={20} />
+      </button>
+      <div>
+        <p className="text-white font-semibold text-sm">{user.name}</p>
+        <p className="text-white/50 text-xs">Profile photo</p>
+      </div>
+    </div>
+
+    <div
+      className="flex-1 flex items-center justify-center p-6"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <img
+        src={user.profileImage}
+        alt={user.name}
+        className="max-w-full max-h-full rounded-2xl object-contain shadow-2xl"
+        onError={(e) => {
+          e.target.src = `https://ui-avatars.com/api/?name=${user.name}&background=FB4E66&color=fff&size=400`;
+        }}
+      />
+    </div>
+
+    <div
+      className="shrink-0 text-center pb-8"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <p className="text-white font-semibold">{user.name}</p>
+      <p className="text-white/50 text-xs mt-1">
+        {user.isOnline ? "● Online" : "Last seen recently"}
+      </p>
+    </div>
+  </div>
+);
+
+export default ChatBox;
