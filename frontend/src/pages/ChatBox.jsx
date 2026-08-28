@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { IoCallOutline, IoVideocamOutline, IoSendSharp } from "react-icons/io5";
 import { BsThreeDotsVertical, BsEmojiSmile, BsPaperclip } from "react-icons/bs";
 import { FiArrowLeft } from "react-icons/fi";
 import UserProfile from "../components/chatUi/UserProfile";
 import Messages from "../components/chatUi/Messages";
+import socket from "../services/socket";
 
 const DEMO_MESSAGES = [
   { id: 1, sender: "other", text: "Hey! What's up? 👋" },
@@ -22,23 +23,49 @@ const DEMO_MESSAGES = [
 ];
 
 const ChatBox = ({ user, onBack }) => {
-  const [messages, setMessages] = useState(DEMO_MESSAGES);
+
+  const [messages, setMessages] = useState([
+    //  {
+    //   id: "",
+    //   sender: "",
+    //   text: ""
+    //   profileImage: ""
+    //  } 
+  ]);
   const [reply, setReply] = useState("");
   const [profileViewOpen, setProfileViewOpen] = useState(false);
 
   const fileInputRef = useRef(null);
   const bottomRef = useRef(null);
-
   
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+   //emit messages
+  const handle_Message = useCallback((payload) => {
+    socket.emit("messages", payload )
+  })
+
+  useEffect(() => {    
+    socket.on("messages", (data) => {
+      console.log(data.user);
+      setMessages(prev => [...prev, {id: data.user.id, text: data.text,}])
+    });
+
+    return ()=> {
+      socket.off("message")
+    }
+  }, []);
+
+ 
 
   const handleSend = () => {
     const text = reply.trim();
+    const payload = {
+      user,
+      text: reply,
+    }
     if (!text) return;
-    setMessages((prev) => [...prev, { id: Date.now(), sender: "me", text }]);
+    // setMessages((prev) => [...prev, { id: Date.now().toString(), sender: "me", text }]);
     setReply("");
+    handle_Message(payload);
   };
 
   const handleKeyDown = (e) => {
@@ -61,9 +88,9 @@ const ChatBox = ({ user, onBack }) => {
 
   return (
     <div className="flex flex-col h-full bg-[#f4f4f7]">
-   
+
       <nav className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 shadow-sm shrink-0">
-       
+
         <button
           onClick={onBack}
           className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 text-[#1B1B29] transition-all active:scale-90 md:hidden"
@@ -94,7 +121,7 @@ const ChatBox = ({ user, onBack }) => {
 
           return (
             <Messages
-              key={msg.id}
+              key={index}
               message={msg}
               topMargin={topMargin}
               isSameAsPrev={isSameAsPrev}
@@ -140,7 +167,12 @@ const ChatBox = ({ user, onBack }) => {
           <button
             onClick={handleSend}
             disabled={!reply.trim()}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FB4E66] text-white shrink-0 hover:bg-[#E2364D] active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-9 h-9 flex items-center justify-center 
+            rounded-full bg-[#FB4E66] text-white 
+            shrink-0 hover:bg-[#E2364D] 
+            active:scale-90 disabled:opacity-40 
+            disabled:cursor-not-allowed transition-all 
+            duration-200"
           >
             <IoSendSharp size={15} />
           </button>

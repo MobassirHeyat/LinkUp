@@ -2,9 +2,12 @@ import { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import ChattingPage from "./ChattingPage";
 import ChatBox from "./ChatBox";
+import socket from "../services/socket";
 
 const MessagesLayout = () => {
   const [selectedChat, setSelectedChat] = useState(null);
+  
+
 
   return (
     <div
@@ -55,7 +58,11 @@ const EmptyState = () => (
         Send private photos and messages to a friend or group.
       </p>
     </div>
-    <button className="mt-2 px-6 py-2.5 bg-[#FB4E66] text-white text-sm font-semibold rounded-full hover:bg-[#E2364D] active:scale-95 transition-all duration-200">
+    <button 
+    className="mt-2 px-6 py-2.5 bg-[#FB4E66] 
+    text-white text-sm font-semibold rounded-full 
+    hover:bg-[#E2364D] active:scale-95 transition-all
+     duration-200">
       Send message
     </button>
   </div>
